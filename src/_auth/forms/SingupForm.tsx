@@ -8,8 +8,10 @@ import { Input } from "@/components/ui/input";
 import { SignupValidation } from "@/lib/validation";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { createUserAccount } from "@/lib/appwrite/api";
+import { useToast } from "@/components/ui/use-toast"
 
 export const SingupForm = () => {
+  const { toast } = useToast()
   const isLoading = false;
 
   const form = useForm<z.infer<typeof SignupValidation>>({
@@ -24,7 +26,11 @@ export const SingupForm = () => {
 
   async function onSubmit(values: z.infer<typeof SignupValidation>) {
     const newUser = await createUserAccount(values);
-    console.log(newUser)
+    if(!newUser) {
+      return toast({ title: "Ocurrió un error al registrarse, intente nuevamente." })
+    }
+
+    // const session = await signInAccount();
   }
 
   return (
