@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SignupValidation } from "@/lib/validation";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { createUserAccount } from "@/lib/appwrite/api";
 
 export const SingupForm = () => {
   const isLoading = false;
@@ -22,8 +23,8 @@ export const SingupForm = () => {
   });
 
   async function onSubmit(values: z.infer<typeof SignupValidation>) {
-    console.log(values)
-    // const newUser = await createUserAccount(values);
+    const newUser = await createUserAccount(values);
+    console.log(newUser)
   }
 
   return (
