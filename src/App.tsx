@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster"
 import { AuthLayout } from "./_auth/AuthLayout";
 import RootLayout from "./_root/RootLayout";
-import { SigninForm } from "./_auth/forms/SigninForm";
+import { SinginForm } from './_auth/forms/SigninForm';
 import { SingupForm } from "./_auth/forms/SingupForm";
 import { Home } from "./_root/pages";
 import "./globals.css";
@@ -13,7 +13,7 @@ const App = () => {
       <Routes>
         {/* public routes */}
         <Route element={<AuthLayout />}>
-          <Route path="/sign-in" element={<SigninForm />} />
+          <Route path="/sign-in" element={<SinginForm />} />
           <Route path="/sign-up" element={<SingupForm />} />
         </Route>
 
