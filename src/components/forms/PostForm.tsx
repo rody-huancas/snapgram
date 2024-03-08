@@ -3,25 +3,28 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Textarea } from "../ui/textarea";
 import { FileUploader } from "../shared/FileUploader";
+import { PostValidation } from "@/lib/validation";
+import { Models } from "appwrite";
 
-const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-});
+type PostFormProps = {
+  post?: Models.Document
+}
 
-export const PostForm = ({ post }) => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+export const PostForm = ({ post }: PostFormProps) => {
+  const form = useForm<z.infer<typeof PostValidation>>({
+    resolver: zodResolver(PostValidation),
     defaultValues: {
-      username: "",
+      caption: post ? post?.caption : "",
+      file: [],
+      location: post ? post?.location : "",
+      tags: post? post.tags.join(',') : "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof PostValidation>) {
     console.log(values);
   }
 
@@ -55,7 +58,7 @@ export const PostForm = ({ post }) => {
           <FormItem>
             <FormLabel className="shad-form_label">Agregar Ubicación</FormLabel>
             <FormControl>
-              <Input type="text" className="shad-input" />
+              <Input type="text" className="shad-input" {...field} />
             </FormControl>
             <FormMessage className="shad-form_message" />
           </FormItem>
@@ -65,7 +68,7 @@ export const PostForm = ({ post }) => {
           <FormItem>
             <FormLabel className="shad-form_label">Agregar Tags (Separado por comas ",")</FormLabel>
             <FormControl>
-              <Input type="text" className="shad-input" placeholder="JS, TS, React" />
+              <Input type="text" className="shad-input" placeholder="JS, TS, React" {...field} />
             </FormControl>
             <FormMessage className="shad-form_message" />
           </FormItem>
