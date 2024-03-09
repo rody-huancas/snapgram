@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -8,12 +9,20 @@ import { Textarea } from "../ui/textarea";
 import { FileUploader } from "../shared/FileUploader";
 import { PostValidation } from "@/lib/validation";
 import { Models } from "appwrite";
+import { useUserContext } from "@/context/AuthContext";
+import { useToast } from "../ui/use-toast";
+import { useCreatePost } from "@/lib/react-query/queries";
 
 type PostFormProps = {
   post?: Models.Document
 }
 
 export const PostForm = ({ post }: PostFormProps) => {
+  const navigate = useNavigate();
+  const { mutateAsync: createPost, isPending: isLoadingCreate } = useCreatePost(); 
+  const { user } = useUserContext(); 
+  const { toast } = useToast(); 
+
   const form = useForm<z.infer<typeof PostValidation>>({
     resolver: zodResolver(PostValidation),
     defaultValues: {
@@ -24,8 +33,19 @@ export const PostForm = ({ post }: PostFormProps) => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof PostValidation>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof PostValidation>) {
+    const newPost = await createPost({
+      ...values,
+      userId: user.id
+    });
+
+    if(!newPost) {
+      toast({
+        title: "Ocurrió un error, intente nuevamente."
+      })
+    }
+
+    navigate("/");
   }
 
   return (
